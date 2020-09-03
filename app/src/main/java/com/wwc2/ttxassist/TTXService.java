@@ -121,7 +121,6 @@ public class TTXService extends Service {
                 //设置预览大小，如果是直接送h264数据，则不需要调用initCameraPreview
                 //hzy todo:
                 //Camera.Size previewSize = mCamera.getPreviewSize();
-
 				int width = 640;
 				int height = 360;
                 //配置通道1的预览大小
