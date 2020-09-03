@@ -3,7 +3,6 @@ package com.wwc2.ttxassist.h264;
 import android.os.MemoryFile;
 import android.os.ParcelFileDescriptor;
 
-import com.wwc2.dvr.IRawDataCallback;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -12,28 +11,30 @@ import java.lang.reflect.Method;
 
 public abstract class BaseDispatch {
 
-    IRawDataCallback mRawDataCallback;
 
-    public BaseDispatch(IRawDataCallback mRawDataCallback) {
+    IChannelDataCallback mRawDataCallback;
+
+    static final byte sps[]= {0x00,0x00,0x00,0x01,0x67,0x64,0x00,0x29,
+            (byte)0xac,(byte)0x1b,0x1a,(byte)0x80,(byte)0xa0,(byte)0x2f,(byte)0xf9,0x66,
+            (byte)0xa0,(byte)0xa0,0x40,0x40,(byte)0xf0,(byte)0x88,0x46,(byte)0xe0};
+
+    static final byte pps[]={0x00,0x00,0x00,0x01,0x68,(byte)0xea,0x43,(byte)0xcb};
+
+
+    public BaseDispatch(IChannelDataCallback mRawDataCallback) {
         this.mRawDataCallback = mRawDataCallback;
+
     }
 
     public abstract  void dispatchData(byte[] data);
     public abstract void start();
     public abstract  void destroy();
 
-    protected IRawDataCallback getRawDataCallback(){
+    protected IChannelDataCallback getRawDataCallback(){
         return mRawDataCallback;
     }
 
-    protected ParcelFileDescriptor copyAndPost(MemoryFile memoryFile, byte[] data, int size) throws IOException,
-            NoSuchMethodException,
-            InvocationTargetException,
-            IllegalAccessException {
-        memoryFile.writeBytes(data, 0, 0, size);
-        Method method = MemoryFile.class.getDeclaredMethod("getFileDescriptor");
-        FileDescriptor fd = (FileDescriptor) method.invoke(memoryFile);
-        ParcelFileDescriptor pfd = ParcelFileDescriptor.dup(fd);
-        return pfd;
-    }
+    abstract public int getChannelNumber();
+
+
 }

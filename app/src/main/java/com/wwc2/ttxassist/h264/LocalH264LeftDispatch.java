@@ -2,8 +2,6 @@ package com.wwc2.ttxassist.h264;
 
 import android.content.Context;
 
-import com.wwc2.dvr.IRawDataCallback;
-
 public class LocalH264LeftDispatch extends LocalH264Dispatch{
 
     private String TAG = "LocalH264LeftDispatch";
@@ -11,8 +9,13 @@ public class LocalH264LeftDispatch extends LocalH264Dispatch{
     private static final String H264_SOCKET = "h264StreamLeftSocket";
     private static final String H264_FILE = "/proc/h264/stream_left";
 
-    public LocalH264LeftDispatch(IRawDataCallback mRawDataCallback, Context mCtx) {
-        super(mRawDataCallback,mCtx);
+    public LocalH264LeftDispatch(IChannelDataCallback callback, Context mCtx) {
+        super(callback,mCtx);
+    }
+
+    @Override
+    public int getChannelNumber() {
+        return Sutils.LOCAL_H264_LEFT_TYPE;
     }
 
     @Override

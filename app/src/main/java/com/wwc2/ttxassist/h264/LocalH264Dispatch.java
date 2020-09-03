@@ -4,15 +4,7 @@ import android.content.Context;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.util.Log;
-
-
-import com.wwc2.dvr.IRawDataCallback;
-import com.wwc2.dvr.data.Config;
-import com.wwc2.dvr.data.ConstantsData;
-import com.wwc2.dvr.utils.SPUtils;
-import com.wwc2.dvr.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,12 +26,14 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
     private static final int STATUS_DATA_WRITE_STOP =0Xff;
 
+    private static final int byte_max = 100*1024;
+
     SocketThread mSocketThread;
     Context mCtx;
 
 
-    public LocalH264Dispatch(IRawDataCallback mRawDataCallback, Context mCtx) {
-        super(mRawDataCallback);
+    public LocalH264Dispatch(IChannelDataCallback callback, Context mCtx) {
+        super(callback);
         this.mCtx =mCtx;
     }
 
@@ -122,7 +116,8 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
             super.run();
 
             int buffSize =0;
-
+            byte[] tmpbuf = new byte[byte_max];
+            byte[] spspps = new byte[32];
             try {
                 openSocketLocked();
             } catch (IOException e) {
@@ -140,9 +135,52 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
             openMapFile();
 
+
+            Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
+            try {
+                yuvFile.seek(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                yuvFile.read(spspps, 0, buffSize);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            sendResponse(STATUS_DATA_WRITE_FINISH);
+
+            try {
+                buffSize = getBuffSize();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            byte[] IDR = new byte[buffSize];
+            try {
+                yuvFile.seek(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                yuvFile.read(IDR, 0, buffSize);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            sendResponse(STATUS_DATA_WRITE_FINISH);
+            getRawDataCallback().inputH264Nalu(getChannelNumber(),Sutils.byteMerger(spspps,IDR),buffSize);
+
+            try {
+                buffSize = getBuffSize();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             while (true) {
 
-                //Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
                 try {
                     yuvFile.seek(0);
                 } catch (IOException e) {
@@ -150,10 +188,14 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
                 }
 
                 try {
-                    getRawDataCallback().onDataFrame(mpfd,buffSize);
-                } catch (RemoteException e) {
+                    yuvFile.read(tmpbuf, 0, buffSize);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
+
+                getRawDataCallback().inputH264Nalu(getChannelNumber(),tmpbuf,buffSize);
 
                 if(isStop){
                     Log.d(TAG, " Socket Thread .is Interrupted.."  );
@@ -211,7 +253,7 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
                 }
             }
 
-            int value = Utils.byteArrayToInt(buffer,0);
+            int value = Sutils.byteArrayToInt(buffer,0);
             return value;
         }
 
@@ -251,7 +293,7 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
                     try {
                         mOutputStream.write(msg);
                     } catch (IOException ex) {
-                        Slog.e(TAG, "Failed to write response:", ex);
+                        Log.e(TAG, "Failed to write response:", ex);
                     }
                 }
             }
@@ -259,32 +301,25 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
 
         private int getValidFPS(){
-            int fps = SPUtils.getH264FrameRate(mCtx);
-            if(fps < Config.MIN_FRAME_BYTE || fps > Config.MAX_FRAME_BYTE){
-                fps = ConstantsData.DEF_H264_FRAME_RATE;
-            }
-            return fps;
+
+            return Sutils.DEF_H264_FRAME_RATE;
         }
 
         private int getValidBPS(){
-            int bitRate = SPUtils.getH264BitRate(mCtx);
-            if(bitRate < Config.MIN_BIT_BYTE || bitRate > Config.MAX_BIT_BYTE){
-                bitRate = ConstantsData.DEF_H264_BIT_RATE;
-            }
-            return bitRate;
+            return Sutils.DEF_H264_BIT_RATE;
         }
 
         void sendFpsAndBps() {
 
             synchronized (this) {
-                byte[] fps  =Utils.intToByteArray(getValidFPS());
-                byte[] bps  =Utils.intToByteArray(getValidBPS());
+                byte[] fps  = Sutils.intToByteArray(getValidFPS());
+                byte[] bps  = Sutils.intToByteArray(getValidBPS());
                 if (mOutputStream != null) {
                     try {
                         mOutputStream.write(fps);
                         mOutputStream.write(bps);
                     } catch (IOException ex) {
-                        Slog.e(TAG, "Failed to write response:", ex);
+                        Log.e(TAG, "Failed to write response:", ex);
                     }
                 }
             }
@@ -294,5 +329,9 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
     protected abstract String getH264Socket();
     protected abstract String getH264File();
+
+     private void readSpsPpsData(byte[] data){
+
+     }
 
 }
