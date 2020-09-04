@@ -117,7 +117,6 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
             int buffSize =0;
             byte[] tmpbuf = new byte[byte_max];
-            byte[] spspps = new byte[32];
             try {
                 openSocketLocked();
             } catch (IOException e) {
@@ -135,49 +134,6 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
 
             openMapFile();
 
-
-            Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
-            try {
-                yuvFile.seek(0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            try {
-                yuvFile.read(spspps, 0, buffSize);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            sendResponse(STATUS_DATA_WRITE_FINISH);
-
-            try {
-                buffSize = getBuffSize();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            byte[] IDR = new byte[buffSize];
-            try {
-                yuvFile.seek(0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                yuvFile.read(IDR, 0, buffSize);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            sendResponse(STATUS_DATA_WRITE_FINISH);
-            getRawDataCallback().inputH264Nalu(getChannelNumber(),Sutils.byteMerger(spspps,IDR),buffSize);
-
-            try {
-                buffSize = getBuffSize();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             while (true) {
 

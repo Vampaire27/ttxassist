@@ -151,7 +151,7 @@ public class TTXService extends Service {
     };
 
 
-    protected synchronized void inputH264Nalu(int channel, int stream, byte[] nalu, int naluLength) {
+    protected  void inputH264Nalu(int channel, int stream, byte[] nalu, int naluLength) {
         //channel为通道号，0表示通道1，1表示通道2,
         //stream为码流类型，0为主码流，1为子码流
         //输入264数据时，要把  SPS, PPS, SEI, IDR 合并成一帧，或者把 SPS, PPS, IDR合并成一帧

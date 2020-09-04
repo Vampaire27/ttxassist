@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.FileObserver;
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -13,6 +14,14 @@ import com.wwc2.ttxassist.h264.LocalH264BackDispatch;
 import com.wwc2.ttxassist.h264.LocalH264FrontDispatch;
 import com.wwc2.ttxassist.h264.LocalH264LeftDispatch;
 import com.wwc2.ttxassist.h264.LocalH264RightDispatch;
+import com.wwc2.ttxassist.h264.Sutils;
+import com.wwc2.ttxassist.utils.LogUtils;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 
 public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallback {
     private static final String TAG = TTXService.TAG;
@@ -28,6 +37,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     public static final int TTX_START =1;
     public static final int TTX_END =0;
+    public byte[] SPS = new byte[32];
 
 //    public static final int TTX_START =1;
 //    public static final int TTX_START =1;
@@ -42,6 +52,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
     public MesBroadCast(Service serivce) {
         super();
         mTTXService = (TTXService) serivce;
+        LogUtils.init(mTTXService);
     }
 
     @Override
@@ -58,7 +69,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
         }
     }
 
-        public void toDoMes(int start ,int channel,int type){
+        public void toDoMes(int start ,int channel,int type) {
              if(start == TTX_START){
                  BaseDispatch mBaseDispatch;
                  switch (channel) {
@@ -69,34 +80,34 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
                              mRegister.put(channel, mBaseDispatch);
                           }
                          break;
-//                     case 1:
-//                         if(mRegister.get(channel) == null) {
-//                             mBaseDispatch = new LocalH264BackDispatch(this, mTTXService);
-//                             mBaseDispatch.start();  //data not come form PreViewCallback
-//                             mRegister.put(channel, mBaseDispatch);
-//                         }
-//                         break;
-//                     case 2:
-//                         if(mRegister.get(channel) == null) {
-//                             mBaseDispatch = new LocalH264LeftDispatch(this, mTTXService);
-//                             mBaseDispatch.start();  //data not come form PreViewCallback
-//                             mRegister.put(channel, mBaseDispatch);
-//                         }
-//                         break;
-//                     case 3:
-//                         if(mRegister.get(channel) == null) {
-//                             mBaseDispatch = new LocalH264RightDispatch(this, mTTXService);
-//                             mBaseDispatch.start();  //data not come form PreViewCallback
-//                             mRegister.put(channel, mBaseDispatch);
-//                         }
-//                         break;
+                     case 1:
+                         if(mRegister.get(channel) == null) {
+                             mBaseDispatch = new LocalH264BackDispatch(this, mTTXService);
+                             mBaseDispatch.start();  //data not come form PreViewCallback
+                             mRegister.put(channel, mBaseDispatch);
+                         }
+                         break;
+                     case 2:
+                         if(mRegister.get(channel) == null) {
+                             mBaseDispatch = new LocalH264LeftDispatch(this, mTTXService);
+                             mBaseDispatch.start();  //data not come form PreViewCallback
+                             mRegister.put(channel, mBaseDispatch);
+                         }
+                         break;
+                     case 3:
+                         if(mRegister.get(channel) == null) {
+                             mBaseDispatch = new LocalH264RightDispatch(this, mTTXService);
+                             mBaseDispatch.start();  //data not come form PreViewCallback
+                             mRegister.put(channel, mBaseDispatch);
+                         }
+                         break;
 
                      default:
                          break;
                  }
 
              }else if(start == TTX_END){
-                 BaseDispatch mBaseDispatch = mRegister.get(channel);
+                 BaseDispatch mBaseDispatch = mRegister.remove(channel);
                  if(mBaseDispatch != null) {
                      mBaseDispatch.destroy();
                  }
@@ -104,12 +115,48 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
         }
 
     @Override
-    public void inputH264Nalu(int channel, byte[] nalu, int naluLength) {
-           String a= byteToHex(nalu,naluLength);
-           Log.d(TAG,"1ns frame . =" + a );
-           mTTXService.inputH264Nalu(channel,0,nalu,naluLength);
+    public synchronized void inputH264Nalu(int channel, byte[] nalu, int naluLength) {
+
+           if(isSps(nalu)){
+               System.arraycopy(nalu, 0, SPS, 0, 32);
+           }else if(isIDR(nalu)){
+               byte[] send = Sutils.byteMerger(SPS,nalu);
+//               String a= byteToHex(send,send.length);
+//               Log.d(TAG,"1ns frame . =" + a );
+//               LogUtils.log2FileOnlyhex(send,send.length);
+               mTTXService.inputH264Nalu(channel,1,send,send.length);
+
+           }else {
+              // String a= byteToHex(nalu,naluLength);
+//               Log.d(TAG,"2ns frame . =" + a );
+//               LogUtils.log2FileOnlyhex(nalu,naluLength);
+               mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
+           }
+
+
     }
 
+     public boolean isSps(byte data[]){
+        if(data[0] ==0x00 &&
+            data[1] ==0x00 &&
+             data[2] ==0x00 &&
+              data[3] == 0x01 &&
+                data[4] == 0x67){
+            return  true;
+        }
+        return false;
+     }
+
+     public boolean isIDR(byte data[]){
+         if(data[0] ==0x00 &&
+                 data[1] ==0x00 &&
+                 data[2] ==0x00 &&
+                 data[3] == 0x01 &&
+                 data[4] == 0x65){
+             return  true;
+         }
+         return false;
+     }
 
     public String byteToHex(byte[] bytes,int size){
             String strHex = "";
