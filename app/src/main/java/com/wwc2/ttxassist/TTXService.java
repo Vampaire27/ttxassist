@@ -190,4 +190,13 @@ public class TTXService extends Service {
     }
 
 
+    protected  void sendAudioData(int channel, byte[] aac, int length){
+        try {
+            mNetBind.inputAacData(channel,aac,length);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

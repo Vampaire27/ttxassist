@@ -15,15 +15,13 @@ import com.wwc2.ttxassist.h264.LocalH264FrontDispatch;
 import com.wwc2.ttxassist.h264.LocalH264LeftDispatch;
 import com.wwc2.ttxassist.h264.LocalH264RightDispatch;
 import com.wwc2.ttxassist.h264.Sutils;
+import com.wwc2.ttxassist.mediacodec.AudioCodecManager;
+import com.wwc2.ttxassist.mediacodec.IAudioDataCallback;
 import com.wwc2.ttxassist.utils.LogUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 
-public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallback {
+
+public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallback , IAudioDataCallback {
     private static final String TAG = TTXService.TAG;
     public static final String MESSAGE_RECEIVED_LIVE_ACTION = "net.babelstar.MESSAGE_RECEIVED_LIVE";	//视频预览请求
     public static final String START_MESSAGE = "start";
@@ -48,6 +46,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     public TTXService mTTXService;
     private ArrayMap<Integer, BaseDispatch> mRegister = new ArrayMap<>();
+    private AudioCodecManager mAudioMng;
 
     public MesBroadCast(Service serivce) {
         super();
@@ -78,7 +77,13 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
                              mBaseDispatch = new LocalH264FrontDispatch(this, mTTXService);
                              mBaseDispatch.start();  //data not come form PreViewCallback
                              mRegister.put(channel, mBaseDispatch);
+
                           }
+                          if(mAudioMng == null){
+                              mAudioMng = new AudioCodecManager(mTTXService);
+                              mAudioMng.setCodecDataLister(this);
+                          }
+                          mAudioMng.startRecord();
                          break;
                      case 1:
                          if(mRegister.get(channel) == null) {
@@ -110,6 +115,9 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
                  BaseDispatch mBaseDispatch = mRegister.remove(channel);
                  if(mBaseDispatch != null) {
                      mBaseDispatch.destroy();
+                 }
+                 if(channel ==0){
+                     mAudioMng.stopRecord();
                  }
              }
         }
@@ -167,4 +175,10 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
             }
             return sb.toString().trim();
         }
+
+
+    @Override
+    public void audioAacData(int channel, byte[] aac, int length) {
+         mTTXService.sendAudioData(channel,aac,length);
+    }
 }
