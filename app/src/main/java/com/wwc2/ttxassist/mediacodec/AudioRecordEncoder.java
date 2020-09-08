@@ -38,6 +38,7 @@ public class AudioRecordEncoder {
     private MediaCodec mMediaCodec;
     private volatile boolean mStopped;
     private Executor mExecutor = Executors.newSingleThreadExecutor();
+    private IAudioDataCallback mIAudioDataCallback;
 
     /**
      * 创建录音对象
@@ -69,6 +70,9 @@ public class AudioRecordEncoder {
         mMediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
     }
 
+    public void setCodecDataLister(IAudioDataCallback lister){
+        mIAudioDataCallback= lister;
+    }
 
 
     public void start(final File outFile) throws IOException {
@@ -119,6 +123,7 @@ public class AudioRecordEncoder {
                         addADTStoPacket(chunkAudio, chunkAudio.length);
                         outputBuffer.get(chunkAudio, 7, outBufferInfo.size);
                         outputBuffer.position(outBufferInfo.offset);
+                        mIAudioDataCallback.audioAacData(0,chunkAudio,chunkAudio.length);
                         fos.write(chunkAudio);
                         mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
                         outputBufferIndex = mMediaCodec.dequeueOutputBuffer(outBufferInfo, timeoutUs);

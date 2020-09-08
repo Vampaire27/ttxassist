@@ -81,9 +81,8 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
                           }
                           if(mAudioMng == null){
                               mAudioMng = new AudioCodecManager(mTTXService);
-                              mAudioMng.setCodecDataLister(this);
                           }
-                          mAudioMng.startRecord();
+                          mAudioMng.startRecord(this);
                          break;
                      case 1:
                          if(mRegister.get(channel) == null) {
@@ -179,6 +178,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     @Override
     public void audioAacData(int channel, byte[] aac, int length) {
-         mTTXService.sendAudioData(channel,aac,length);
+        Log.d(TAG,"audioAacData . =" + aac );
+        mTTXService.sendAudioData(channel,aac,length);
     }
 }

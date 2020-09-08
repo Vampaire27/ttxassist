@@ -12,20 +12,19 @@ import java.io.IOException;
 public class AudioCodecManager {
     private Context mCtx;
     AudioRecordEncoder mAudioRecordEncoder;
-    IAudioDataCallback mIAudioDataCallback;
+
 
     public AudioCodecManager(Context mCtx) {
         this.mCtx = mCtx;
     }
 
-    public void setCodecDataLister(IAudioDataCallback lister){
-          mIAudioDataCallback= lister;
-    }
-
-    public void startRecord(){
+    public void startRecord(IAudioDataCallback lister){
         File file = new File(FileUtils.getAacFileDir(mCtx), FileUtils.getUUID32() + ".aac");
         Log.d("out file:", file.getAbsolutePath());
         mAudioRecordEncoder = new AudioRecordEncoder();
+        if(lister != null) {
+            mAudioRecordEncoder.setCodecDataLister(lister);
+        }
         mAudioRecordEncoder.createAudio();
         try {
             mAudioRecordEncoder.createMediaCodec();
