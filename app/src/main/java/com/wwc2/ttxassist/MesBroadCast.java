@@ -56,15 +56,19 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction() == MESSAGE_RECEIVED_LIVE_ACTION) {
-            int start = intent.getIntExtra(START_MESSAGE, 0);
-            int type = intent.getIntExtra(TYPE_MESSAGE, 0);
-            int channel = intent.getIntExtra(CHANNEL_MESSAGE, 0);
-            int stream = intent.getIntExtra(STREAM_MESSAGE, 0);
+        if(mTTXService.ismBindSuc()){
+            if (intent.getAction() == MESSAGE_RECEIVED_LIVE_ACTION) {
+                int start = intent.getIntExtra(START_MESSAGE, 0);
+                int type = intent.getIntExtra(TYPE_MESSAGE, 0);
+                int channel = intent.getIntExtra(CHANNEL_MESSAGE, 0);
+                int stream = intent.getIntExtra(STREAM_MESSAGE, 0);
 
-            toDoMes(start,channel,type);
-            Log.d(TAG, " MESSAGE_RECEIVED_LIVE start= " + start + ",type =  " + type + ", channel =" + channel);
+                toDoMes(start,channel,type);
+                Log.d(TAG, " MESSAGE_RECEIVED_LIVE start= " + start + ",type =  " + type + ", channel =" + channel);
 
+            }
+        }else{
+            mTTXService.startBindSerice();
         }
     }
 
@@ -115,7 +119,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
                  if(mBaseDispatch != null) {
                      mBaseDispatch.destroy();
                  }
-                 if(channel ==0){
+                 if(channel ==0  || mAudioMng != null){
                      mAudioMng.stopRecord();
                  }
              }
@@ -123,24 +127,24 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     @Override
     public synchronized void inputH264Nalu(int channel, byte[] nalu, int naluLength) {
+////add sps idr  every frame...
+//           if(isSps(nalu)){
+//               System.arraycopy(nalu, 0, SPS, 0, 32);
+//           }else if(isIDR(nalu)){
+//               byte[] send = Sutils.byteMerger(SPS,nalu);
+////               String a= byteToHex(send,send.length);
+////               Log.d(TAG,"1ns frame . =" + a );
+////               LogUtils.log2FileOnlyhex(send,send.length);
+//               mTTXService.inputH264Nalu(channel,1,send,send.length);
+//
+//           }else {
+//              // String a= byteToHex(nalu,naluLength);
+////               Log.d(TAG,"2ns frame . =" + a );
+////               LogUtils.log2FileOnlyhex(nalu,naluLength);
+//               mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
+//           }
 
-           if(isSps(nalu)){
-               System.arraycopy(nalu, 0, SPS, 0, 32);
-           }else if(isIDR(nalu)){
-               byte[] send = Sutils.byteMerger(SPS,nalu);
-//               String a= byteToHex(send,send.length);
-//               Log.d(TAG,"1ns frame . =" + a );
-//               LogUtils.log2FileOnlyhex(send,send.length);
-               mTTXService.inputH264Nalu(channel,1,send,send.length);
-
-           }else {
-              // String a= byteToHex(nalu,naluLength);
-//               Log.d(TAG,"2ns frame . =" + a );
-//               LogUtils.log2FileOnlyhex(nalu,naluLength);
-               mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
-           }
-
-
+        mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
     }
 
      public boolean isSps(byte data[]){
@@ -178,7 +182,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     @Override
     public void audioAacData(int channel, byte[] aac, int length) {
-        Log.d(TAG,"audioAacData . =" + aac );
+       // Log.d(TAG,"audioAacData . =" + aac );
         mTTXService.sendAudioData(channel,aac,length);
     }
 }

@@ -58,6 +58,19 @@ public class TTXService extends Service {
 
     }
 
+
+    public boolean ismBindSuc() {
+        return mBindSuc;
+    }
+
+     public void startBindSerice(){
+         Intent intent = new Intent("net.babelstar.gdispatch.remoteservice");
+         //执法仪版本用的包名
+         intent.setPackage("net.babelstar.gdispatch");
+         startService(intent);
+         bindService(intent, mServerConnection, BIND_AUTO_CREATE);
+     }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -129,7 +142,7 @@ public class TTXService extends Service {
                // mNetBind.initCameraPreview(1, previewSize.width, previewSize.height);
                 //设置音频格式和视频类型 264，265
                 //mNetBind.setMediaInfoEx(12, 0, 0,0);
-//				mNetBind.setMediaInfoEx(12, 0, 0, 0);
+				mNetBind.setMediaInfoEx(13, 0, 0, 0);
                 //设置分辨率
                 //doChangeResolution  最后一个参数，0是CIF，1是D1，2是720P，3是1080P
                 //设置通道1子码流分辨率为D1
@@ -147,6 +160,11 @@ public class TTXService extends Service {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            Log.d(TAG,"onBindingDied!");
         }
     };
 

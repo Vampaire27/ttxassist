@@ -18,8 +18,8 @@ android {
         applicationId "com.wwc2.ttxassist"
         minSdkVersion 27
         targetSdkVersion 29
-        versionCode 1000
-        versionName "1.00.0"
+        versionCode 1001
+        versionName "1.00.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

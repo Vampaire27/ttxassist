@@ -23,7 +23,7 @@ public class AudioRecordEncoder {
     // 输入源 麦克风
     private final static int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
     // 采样率 44100Hz，所有设备都支持
-    private final static int SAMPLE_RATE = 44100;
+    private final static int SAMPLE_RATE = 16000;
     // 通道 单声道，所有设备都支持
     private final static int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
     // 精度 16 位，所有设备都支持
@@ -31,7 +31,7 @@ public class AudioRecordEncoder {
     // 通道数 单声道
     private static final int CHANNEL_COUNT = 1;
     // 比特率
-    private static final int BIT_RATE = 96_000;
+    private static final int BIT_RATE = 19850;//96_000;
     // 缓冲区字节大小
     private int mBufferSizeInBytes;
     private AudioRecord mAudioRecord;
@@ -91,7 +91,7 @@ public class AudioRecordEncoder {
     private void startAsync(File outFile) throws IOException {
         Log.d(TAG, "start() called with: outFile = [" + outFile + "]");
         mStopped = false;
-        try (OutputStream fos = new FileOutputStream(outFile)) {
+        //try (OutputStream fos = new FileOutputStream(outFile)) {
             mMediaCodec.start();
             mAudioRecord.startRecording();
 
@@ -124,19 +124,19 @@ public class AudioRecordEncoder {
                         outputBuffer.get(chunkAudio, 7, outBufferInfo.size);
                         outputBuffer.position(outBufferInfo.offset);
                         mIAudioDataCallback.audioAacData(0,chunkAudio,chunkAudio.length);
-                        fos.write(chunkAudio);
+                        //fos.write(chunkAudio);
                         mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
                         outputBufferIndex = mMediaCodec.dequeueOutputBuffer(outBufferInfo, timeoutUs);
                     }
                 }
             }
-        } finally {
+       // } finally {
             Log.i(TAG, "startAsync release");
             mAudioRecord.stop();
             mAudioRecord.release();
             mMediaCodec.stop();
             mMediaCodec.release();
-        }
+       // }
     }
 
     public void stop() {
@@ -151,9 +151,28 @@ public class AudioRecordEncoder {
      * <p>
      * Note the packetLen must count in the ADTS header itself.
      */
+
+   // int profile = 2;  //AAC LC，MediaCodecInfo.CodecProfileLevel.AACObjectLC;
+    //int freqIdx = 4;  //见后面注释avpriv_mpeg4audio_sample_rates中441000对应的数组下标，来自ffmpeg源码
+    //        int chanCfg = 1;  //见后面注释channel_configuration，AudioFormat.CHANNEL_IN_MONO 单声道(声道数量)
+   // int chanCfg = chancfg;  //见后面注释channel_configuration，AudioFormat.CHANNEL_IN_MONO 单声道(声道数量)
+
+    /*int avpriv_mpeg4audio_sample_rates[] = {96000, 88200, 64000, 48000, 44100, 32000,24000, 22050, 16000, 12000, 11025, 8000, 7350};
+    channel_configuration: 表示声道数chanCfg
+    0: Defined in AOT Specifc Config
+    1: 1 channel: front-center
+    2: 2 channels: front-left, front-right
+    3: 3 channels: front-center, front-left, front-right
+    4: 4 channels: front-center, front-left, front-right, back-center
+    5: 5 channels: front-center, front-left, front-right, back-left, back-right
+    6: 6 channels: front-center, front-left, front-right, back-left, back-right, LFE-channel
+    7: 8 channels: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel
+    8-15: Reserved
+    */
+
     private void addADTStoPacket(byte[] packet, int packetLen) {
         int profile = 2;  //AAC LC
-        int freqIdx = 4;  //44.1KHz
+        int freqIdx = 8;  //16K
         int chanCfg = 1;  //CPE
         // fill in ADTS data
         packet[0] = (byte) 0xFF;
