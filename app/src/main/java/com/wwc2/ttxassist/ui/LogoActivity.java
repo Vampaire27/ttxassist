@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wwc2.ttxassist.AppConfig;
 import com.wwc2.ttxassist.R;
@@ -116,6 +117,7 @@ public class LogoActivity extends AppCompatActivity {
         if(ip != null && account != null ) {
             AppConfig.getInstance().put(this,AppConfig.SERVICE_ADDRESS,ip.trim());
             AppConfig.getInstance().put(this,AppConfig.USER_ACCOUNT,account.trim());
+            Toast.makeText(this, "设置成功", Toast.LENGTH_LONG).show();
             startTTxServiceWithSyncAccount();
         }
 
