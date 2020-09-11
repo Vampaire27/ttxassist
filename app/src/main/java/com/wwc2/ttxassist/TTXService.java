@@ -58,6 +58,24 @@ public class TTXService extends Service {
 
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        int ret = super.onStartCommand(intent, flags, startId);
+        if (intent != null) {
+            String action = intent.getAction();
+            if ("SYNC_ADDRESS_ACCOUNT".equals(action) &&  mNetBind != null) {
+                String address =AppConfig.getInstance().getValue(TTXService.this,AppConfig.SERVICE_ADDRESS,"test.cmsv8.com");
+                String count =AppConfig.getInstance().getValue(TTXService.this,AppConfig.USER_ACCOUNT,"1809690");
+
+                try {
+                    mNetBind.setServerAndAccount(address, count);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
+    }
 
     public boolean ismBindSuc() {
         return mBindSuc;
@@ -119,8 +137,11 @@ public class TTXService extends Service {
                 //120.26.98.110服务器上，测试可使用的设备编号有112233, 67706,67707,67708 请选择一个未在线的设备做测试，另不建议使用  112233这个编号来做测试
                 //客户端信息  账号：szhsj 密码：000000 服务器：http://120.26.98.110
                 //登录界面上有windows客户端下载，也可以下载windows客户端进行测试
+           //
+                String address =AppConfig.getInstance().getValue(TTXService.this,AppConfig.SERVICE_ADDRESS,"test.cmsv8.com");
+                String count =AppConfig.getInstance().getValue(TTXService.this,AppConfig.USER_ACCOUNT,"1809690");
 
-                mNetBind.setServerAndAccount("test.cmsv8.com", "1809690");
+                mNetBind.setServerAndAccount(address, count);
                 //执法仪
                 //mNetBind.setServerAndAccount("39.104.57.38", "10005");
                 //设置GPS上报间隔
