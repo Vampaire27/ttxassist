@@ -143,8 +143,9 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 ////               LogUtils.log2FileOnlyhex(nalu,naluLength);
 //               mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
 //           }
-
-        mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
+       if(mTTXService!= null) {
+           mTTXService.inputH264Nalu(channel, 1, nalu, naluLength);
+       }
     }
 
      public boolean isSps(byte data[]){
@@ -182,7 +183,9 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
     @Override
     public void audioAacData(int channel, byte[] aac, int length) {
-       // Log.d(TAG,"audioAacData . =" + aac );
-        mTTXService.sendAudioData(channel,aac,length);
+        Log.d(TAG,"audioAacData . =" + aac );
+        if(mTTXService != null) {
+            mTTXService.sendAudioData(channel, aac, length);
+        }
     }
 }

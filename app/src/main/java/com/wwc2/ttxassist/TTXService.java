@@ -35,6 +35,18 @@ public class TTXService extends Service {
         super.onCreate();
         Log.d(TAG,"onCreate");
 
+        bindttx();
+        if (mMesReviver == null) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(MesBroadCast.MESSAGE_RECEIVED_LIVE_ACTION);
+            mMesReviver = new MesBroadCast(this);
+            registerReceiver(mMesReviver, intentFilter);
+        }
+
+    }
+
+
+    private void bindttx(){
         //看门狗服务，会守护net.babelstar.gdispatch.remoteservice服务，当net.babelstar.gdispatch.remoteservice当机后，会再把net.babelstar.gdispatch.remoteservice重新启动
         Intent intentDeamon = new Intent("net.babelstar.gdispatch.dogservice");
         intentDeamon.setPackage("net.babelstar.gdispatch");
@@ -49,13 +61,6 @@ public class TTXService extends Service {
         //当net.babelstar.gdispatch.remoteservice没有启动时，bindService调用可能会失败，请先手动启动CMSCruise APP程序，此APP启动时会创建好net.babelstar.gdispatch.remoteservice这个服务
         //注意，第一次绑定成功后，配置参数，会造成 net.babelstar.gdispatch.remoteservice服务挂掉，请重新运行 CMSCruise APP，再启用ttxnetdemo即可恢复正常
         bindService(intent, mServerConnection, BIND_AUTO_CREATE);
-        if (mMesReviver == null) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(MesBroadCast.MESSAGE_RECEIVED_LIVE_ACTION);
-            mMesReviver = new MesBroadCast(this);
-            registerReceiver(mMesReviver, intentFilter);
-        }
-
     }
 
     @Override
@@ -72,6 +77,8 @@ public class TTXService extends Service {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+            }else {
+                Log.d(TAG,"mNetBind == null");
             }
         }
         return ret;
@@ -185,7 +192,10 @@ public class TTXService extends Service {
 
         @Override
         public void onBindingDied(ComponentName name) {
-            Log.d(TAG,"onBindingDied!");
+            Log.d(TAG,"onBindingDied! start new bind");
+            mBindSuc = false;
+            mNetBind = null;
+            bindttx();
         }
     };
 
@@ -231,7 +241,9 @@ public class TTXService extends Service {
 
     protected  void sendAudioData(int channel, byte[] aac, int length){
         try {
-            mNetBind.inputAacData(channel,aac,length);
+            if (mBindSuc && mNetBind != null) {
+                mNetBind.inputAacData(channel, aac, length);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
