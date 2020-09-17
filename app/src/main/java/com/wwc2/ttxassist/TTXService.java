@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -30,6 +32,8 @@ public class TTXService extends Service {
     private byte[] mTempNalubuf = new byte[AIDL_BYTE_PACK_LENGTH];
     private MesBroadCast mMesReviver;
 
+    private AccStatusObserver mAccStatusObserver;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,10 +47,20 @@ public class TTXService extends Service {
             registerReceiver(mMesReviver, intentFilter);
         }
 
+        mAccStatusObserver = new AccStatusObserver(
+                new Handler(),TTXService.this);
+
+        Uri uri_acc = Uri.parse("content://" + AccStatusObserver.AUTHORITY + "/"
+                + AccStatusObserver.ACC_STATUS);
+        TTXService.this.getContentResolver().
+                registerContentObserver(uri_acc,
+                        true, mAccStatusObserver);
+
+
     }
 
 
-    private void bindttx(){
+    public void bindttx(){
         //看门狗服务，会守护net.babelstar.gdispatch.remoteservice服务，当net.babelstar.gdispatch.remoteservice当机后，会再把net.babelstar.gdispatch.remoteservice重新启动
         Intent intentDeamon = new Intent("net.babelstar.gdispatch.dogservice");
         intentDeamon.setPackage("net.babelstar.gdispatch");
@@ -116,7 +130,7 @@ public class TTXService extends Service {
         unregisterReceiver(mMesReviver);
         unbindService(mServerConnection);
 
-
+        getContentResolver().unregisterContentObserver(mAccStatusObserver);
     }
 
     private ServiceConnection mServerConnection = new ServiceConnection() {
@@ -124,6 +138,7 @@ public class TTXService extends Service {
         public void onServiceDisconnected(ComponentName name) {
             mBindSuc = false;
             mNetBind = null;
+            bindDieClear();
         }
 
         @Override
@@ -195,6 +210,7 @@ public class TTXService extends Service {
             Log.d(TAG,"onBindingDied! start new bind");
             mBindSuc = false;
             mNetBind = null;
+            bindDieClear();
             bindttx();
         }
     };
@@ -248,6 +264,13 @@ public class TTXService extends Service {
             e.printStackTrace();
         }
 
+    }
+
+    public void bindDieClear(){
+        Log.d(TAG,"bindDieClear....");
+        if (mMesReviver != null) {
+            mMesReviver.clearRegister();
+        }
     }
 
 }

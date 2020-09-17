@@ -72,58 +72,72 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
         }
     }
 
-        public void toDoMes(int start ,int channel,int type) {
-             if(start == TTX_START){
-                 BaseDispatch mBaseDispatch;
-                 switch (channel) {
-                     case 0:
-                         if(mRegister.get(channel)== null) {
-                             mBaseDispatch = new LocalH264FrontDispatch(this, mTTXService);
-                             mBaseDispatch.start();  //data not come form PreViewCallback
-                             mRegister.put(channel, mBaseDispatch);
+    public void toDoMes(int start ,int channel,int type) {
+        if(type == AppConfig.TTX_MEDIA_AV) {
+            if (start == TTX_START) {
+                BaseDispatch mBaseDispatch;
+                switch (channel) {
+                    case 0:
+                        if (mRegister.get(channel) == null) {
+                            mBaseDispatch = new LocalH264FrontDispatch(this, mTTXService);
+                            mBaseDispatch.start();  //data not come form PreViewCallback
+                            mRegister.put(channel, mBaseDispatch);
 
-                          }
-                          if(mAudioMng == null){
-                              mAudioMng = new AudioCodecManager(mTTXService);
-                          }
-                          mAudioMng.startRecord(this);
-                         break;
-                     case 1:
-                         if(mRegister.get(channel) == null) {
-                             mBaseDispatch = new LocalH264BackDispatch(this, mTTXService);
-                             mBaseDispatch.start();  //data not come form PreViewCallback
-                             mRegister.put(channel, mBaseDispatch);
-                         }
-                         break;
-                     case 2:
-                         if(mRegister.get(channel) == null) {
-                             mBaseDispatch = new LocalH264LeftDispatch(this, mTTXService);
-                             mBaseDispatch.start();  //data not come form PreViewCallback
-                             mRegister.put(channel, mBaseDispatch);
-                         }
-                         break;
-                     case 3:
-                         if(mRegister.get(channel) == null) {
-                             mBaseDispatch = new LocalH264RightDispatch(this, mTTXService);
-                             mBaseDispatch.start();  //data not come form PreViewCallback
-                             mRegister.put(channel, mBaseDispatch);
-                         }
-                         break;
+                        }
+                        if (mAudioMng == null) {
+                            mAudioMng = new AudioCodecManager(mTTXService);
+                        }
+                        mAudioMng.startRecord(this);
+                        break;
+                    case 1:
+                        if (mRegister.get(channel) == null) {
+                            mBaseDispatch = new LocalH264BackDispatch(this, mTTXService);
+                            mBaseDispatch.start();  //data not come form PreViewCallback
+                            mRegister.put(channel, mBaseDispatch);
+                        }
+                        break;
+                    case 2:
+                        if (mRegister.get(channel) == null) {
+                            mBaseDispatch = new LocalH264LeftDispatch(this, mTTXService);
+                            mBaseDispatch.start();  //data not come form PreViewCallback
+                            mRegister.put(channel, mBaseDispatch);
+                        }
+                        break;
+                    case 3:
+                        if (mRegister.get(channel) == null) {
+                            mBaseDispatch = new LocalH264RightDispatch(this, mTTXService);
+                            mBaseDispatch.start();  //data not come form PreViewCallback
+                            mRegister.put(channel, mBaseDispatch);
+                        }
+                        break;
 
-                     default:
-                         break;
-                 }
+                    default:
+                        break;
+                }
 
-             }else if(start == TTX_END){
-                 BaseDispatch mBaseDispatch = mRegister.remove(channel);
-                 if(mBaseDispatch != null) {
-                     mBaseDispatch.destroy();
-                 }
-                 if(channel ==0  || mAudioMng != null){
-                     mAudioMng.stopRecord();
-                 }
-             }
+            } else if (start == TTX_END) {
+                BaseDispatch mBaseDispatch = mRegister.remove(channel);
+                if (mBaseDispatch != null) {
+                    mBaseDispatch.destroy();
+                }
+                if (channel == 0 || mAudioMng != null) {
+                    mAudioMng.stopRecord();
+                }
+            }
+        } // AppConfig.TTX_MEDIA_AV
+    }
+
+
+    public void clearRegister(){
+        Log.d(TAG,"clearRegister ..." );
+        for(int i= 0; i < mRegister.size() ; i++){
+            mRegister.get(i).destroy();
         }
+        mRegister.clear();
+        if(mAudioMng != null){
+            mAudioMng.stopRecord();
+        }
+    }
 
     @Override
     public synchronized void inputH264Nalu(int channel, byte[] nalu, int naluLength) {

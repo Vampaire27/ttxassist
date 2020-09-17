@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 
 public class AppConfig {
 
+    public static final int TTX_MEDIA_AV		= 1;		//实时视频
+    public static final int TTX_MEDIA_TALKBACK	= 2;		//对讲
+    public static final int TTX_MEDIA_LISTEN	= 3;		//监听
+
 
     private static final String USER_INFO = "user_info";
 
