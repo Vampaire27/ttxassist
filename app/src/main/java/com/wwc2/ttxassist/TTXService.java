@@ -16,7 +16,6 @@ import android.util.Log;
 
 import net.babelstar.gdispatch.service.TtxNetwork;
 
-import androidx.annotation.Nullable;
 
 public class TTXService extends Service {
     final static String TAG = "ttxService";
@@ -102,15 +101,9 @@ public class TTXService extends Service {
         return mBindSuc;
     }
 
-     public void startBindSerice(){
-         Intent intent = new Intent("net.babelstar.gdispatch.remoteservice");
-         //执法仪版本用的包名
-         intent.setPackage("net.babelstar.gdispatch");
-         startService(intent);
-         bindService(intent, mServerConnection, BIND_AUTO_CREATE);
-     }
 
-    @Nullable
+
+
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG,"onBind");
@@ -160,8 +153,8 @@ public class TTXService extends Service {
                 //客户端信息  账号：szhsj 密码：000000 服务器：http://120.26.98.110
                 //登录界面上有windows客户端下载，也可以下载windows客户端进行测试
            //
-                String address =AppConfig.getInstance().getValue(TTXService.this,AppConfig.SERVICE_ADDRESS,"test.cmsv8.com");
-                String count =AppConfig.getInstance().getValue(TTXService.this,AppConfig.USER_ACCOUNT,"1809690");
+                String address =AppConfig.getInstance().getValue(TTXService.this,AppConfig.SERVICE_ADDRESS,"39.108.194.249");
+                String count =AppConfig.getInstance().getValue(TTXService.this,AppConfig.USER_ACCOUNT,"9230203");
 
                 mNetBind.setServerAndAccount(address, count);
                 //执法仪
@@ -211,7 +204,7 @@ public class TTXService extends Service {
             mBindSuc = false;
             mNetBind = null;
             bindDieClear();
-            bindttx();
+           // bindttx(); acc off kill for sleep
         }
     };
 

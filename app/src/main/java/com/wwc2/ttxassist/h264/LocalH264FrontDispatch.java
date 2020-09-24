@@ -8,8 +8,12 @@ public class LocalH264FrontDispatch extends LocalH264Dispatch{
     private String TAG = "LocalH264FrontDispatch";
 
 
-    private static final String H264_SOCKET = "h264StreamFrontSocket";
-    private static final String H264_FILE = "/proc/h264/stream_front";
+    private  final String H264_SYNC = "/dev/wwc2_hsf_sync";
+    private  final String H264_DATA = "/sdcard/.h264StreamFront";
+
+    public  final int MODE_WWC2_H264_START =50;
+    public  final int MODE_WWC2_H264_STOP =100;
+
 
     public LocalH264FrontDispatch(IChannelDataCallback callback, Context mCtx) {
         super(callback,mCtx);
@@ -21,12 +25,22 @@ public class LocalH264FrontDispatch extends LocalH264Dispatch{
     }
 
     @Override
-    protected String getH264Socket() {
-        return H264_SOCKET;
+    protected String getH264Sync() {
+        return H264_SYNC;
     }
 
     @Override
-    protected String getH264File() {
-        return H264_FILE;
+    protected String getH264Data() {
+        return H264_DATA;
+    }
+
+    @Override
+    protected int getH264Start() {
+        return MODE_WWC2_H264_START;
+    }
+
+    @Override
+    protected int getH264Stop() {
+        return MODE_WWC2_H264_STOP;
     }
 }

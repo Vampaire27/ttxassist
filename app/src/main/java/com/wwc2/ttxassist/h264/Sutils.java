@@ -1,5 +1,9 @@
 package com.wwc2.ttxassist.h264;
 
+import android.util.Log;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -35,6 +39,19 @@ public class Sutils {
         System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
         System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
         return byte_3;
+    }
+
+
+    public static void writeTextFile(String tivoliMsg, String fileName) {
+        try {
+            byte[] bMsg = tivoliMsg.getBytes();
+            FileOutputStream fOut = new FileOutputStream(fileName);
+            fOut.write(bMsg);
+            fOut.close();
+        } catch (IOException e) {
+            //throw the exception
+            Log.e("------write TextFile --e=",  e.toString());
+        }
     }
 
 }

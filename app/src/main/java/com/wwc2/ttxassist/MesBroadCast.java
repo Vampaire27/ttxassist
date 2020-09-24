@@ -68,7 +68,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
 
             }
         }else{
-            mTTXService.startBindSerice();
+            mTTXService.bindttx();
         }
     }
 

@@ -16,14 +16,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.app.Activity;
 import com.wwc2.ttxassist.AppConfig;
 import com.wwc2.ttxassist.R;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 
-public class LogoActivity extends AppCompatActivity {
+public class LogoActivity extends Activity {
      private String TAG =  "LogoActivity";
      private String ACTION_ADDRESS_ACCOUNT =  "SYNC_ADDRESS_ACCOUNT";
     private AutoCompleteTextView serviceAdress;
