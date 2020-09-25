@@ -20,6 +20,9 @@ public class Sutils {
     public static final int LOCAL_H264_LEFT_TYPE = 2;
     public static final int LOCAL_H264_RIGHT_TYPE = 3;
 
+    public static final int LOCAL_H264_EXTERN_ONE = 4;
+    public static final int LOCAL_H264_EXTERN_TWO = 5;
+
 
     public static int byteArrayToInt(byte[] valueBuf, int offset) {
         ByteBuffer converter = ByteBuffer.wrap(valueBuf);

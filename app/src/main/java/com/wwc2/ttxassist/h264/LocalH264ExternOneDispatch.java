@@ -7,10 +7,10 @@ public class LocalH264ExternOneDispatch extends LocalH264Dispatch{
     private String TAG = "LocalH264BackDispatch";
 
     private  final String H264_SYNC = "/dev/wwc2_hsch4_sync";
-    private  final String H264_DATA = "/sdcard/.streamCh4.h264";
+    private  final String H264_DATA = "/sdcard/.h264StreamCh4";
 
-    public  final int MODE_WWC2_H264_START = 51;
-    public  final int MODE_WWC2_H264_STOP = 101;
+    public  final int MODE_WWC2_H264_START = 54;
+    public  final int MODE_WWC2_H264_STOP = 104;
 
     public LocalH264ExternOneDispatch(IChannelDataCallback callback, Context mCtx) {
         super(callback,mCtx);
@@ -18,7 +18,7 @@ public class LocalH264ExternOneDispatch extends LocalH264Dispatch{
 
      @Override
      public int getChannelNumber() {
-         return Sutils.LOCAL_H264_BACK_TYPE;
+         return Sutils.LOCAL_H264_EXTERN_ONE;
      }
 
     @Override

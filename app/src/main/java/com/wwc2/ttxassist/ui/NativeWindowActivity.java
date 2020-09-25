@@ -182,7 +182,11 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
     public void inputH264Nalu(int channel, byte[] nalu, int naluLength) {
                //String a= byteToHex(nalu,naluLength);
                //Log.d(TAG,"2ns frame . =" + a );
-               H264Utils.log2FileOnlyhex(nalu,nalu.length);
+        Log.d(TAG,"mCurrentShow . =" + mCurrentShow );
+        Log.d(TAG,"mCurrentShow . =" + mCurrentShow );
+             if(channel == mCurrentShow) {
+                 H264Utils.log2FileOnlyhex(nalu, nalu.length);
+             }
     }
 
     @Override
