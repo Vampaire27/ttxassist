@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            style="@style/SampleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onBasisClick"
+            android:text="NativeWindows" />
+
+        <Button
+            style="@style/SampleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onColorClick"
+            android:text="Java" />
+
+
+
+
+    </LinearLayout>
+
+
+</ScrollView>

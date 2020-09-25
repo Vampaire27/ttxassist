@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        android:gravity="left">
+
+    <Button
+        android:id="@+id/btn_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onDrawFrontClick"
+        android:text="前视" />
+
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onDrawBackClick"
+        android:text="后视" />
+
+
+    <Button
+        android:id="@+id/btn_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onDrawLeftClick"
+        android:text="左视" />
+
+
+        <Button
+            android:id="@+id/btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onDrawRightClick"
+            android:text="右视" />
+
+        <Button
+            android:id="@+id/btn_extern_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onDrawExternOneClick"
+            android:text="Extern1" />
+
+
+        <Button
+            android:id="@+id/btn_extern_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onDrawExternTwoClick"
+            android:text="Extern2" />
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:text="h264文件路径:"
+        />
+
+
+    <TextView
+        android:id="@+id/fileName"
+        style="@style/SampleTextStyle"
+        android:layout_marginLeft="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="....."
+        />
+
+    <Button
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onPlayClick"
+        android:text="回放文件" />
+</LinearLayout>

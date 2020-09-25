@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.FileObserver;
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -14,10 +13,9 @@ import com.wwc2.ttxassist.h264.LocalH264BackDispatch;
 import com.wwc2.ttxassist.h264.LocalH264FrontDispatch;
 import com.wwc2.ttxassist.h264.LocalH264LeftDispatch;
 import com.wwc2.ttxassist.h264.LocalH264RightDispatch;
-import com.wwc2.ttxassist.h264.Sutils;
 import com.wwc2.ttxassist.mediacodec.AudioCodecManager;
 import com.wwc2.ttxassist.mediacodec.IAudioDataCallback;
-import com.wwc2.ttxassist.utils.LogUtils;
+import com.wwc2.ttxassist.utils.H264Utils;
 
 
 
@@ -51,7 +49,7 @@ public class MesBroadCast extends BroadcastReceiver implements IChannelDataCallb
     public MesBroadCast(Service serivce) {
         super();
         mTTXService = (TTXService) serivce;
-        LogUtils.init(mTTXService);
+        H264Utils.init(mTTXService);
     }
 
     @Override

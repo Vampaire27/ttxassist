@@ -15,7 +15,7 @@ public class TTXApplication  extends Application {
         Log.d(TAG,"onCreate");
         super.onCreate();
         mContext = getApplicationContext();
-        startTTxService();
+       // startTTxService();
     }
 
     public  void startTTxService() {

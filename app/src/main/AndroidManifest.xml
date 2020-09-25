@@ -14,14 +14,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".ui.LogoActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask">
+        <activity android:name=".ui.UISampleActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.wwc2.ttxassist.ui.NativeWindowActivity" />
+
+        <activity android:name="com.wwc2.ttxassist.ui.h264decode.PlayerActivity" />
+
+<!--        <activity android:name=".ui.LogoActivity"-->
+<!--            android:excludeFromRecents="true"-->
+<!--            android:launchMode="singleTask">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN"/>-->
+<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
 
         <service
