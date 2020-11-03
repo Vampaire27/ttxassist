@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="left">
-        android:gravity="left">
 
     <Button
         android:id="@+id/btn_front"
@@ -82,6 +81,42 @@
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:onClick="onPlayClick"
         android:text="回放文件" />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="40dp"
+        android:textColor="@color/colorAccent"
+        android:maxLines="5"
+        android:text="PS:\n
+        1:点击第一排的前视,后视...等按钮.开始获取相应的channel的数据.\n
+        2:数据保存在/storage/emulated/0/路径下以.h264结尾的文件中,用于调试. \n
+        3:点击 回放文件 按钮,可以播放刚才录制的h264文件.\n
+                                                    "
+        />
+
+        <Button
+            android:id="@+id/btn_takePhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onTakePhone"
+            android:text="前视拍照" />
+
+        <TextView
+            android:id="@+id/photo_path"
+            style="@style/SampleTextStyle"
+            android:layout_marginLeft="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="照片路径:"
+            android:text="path"
+            />
+
+
 </LinearLayout>

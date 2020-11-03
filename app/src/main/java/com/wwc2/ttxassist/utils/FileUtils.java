@@ -15,10 +15,13 @@ import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -312,5 +315,40 @@ public final class FileUtils {
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
+
+
+    public static void writeTextFile(String tivoliMsg, String fileName) {
+        try {
+            byte[] bMsg = tivoliMsg.getBytes();
+            FileOutputStream fOut = new FileOutputStream(fileName);
+            fOut.write(bMsg);
+            fOut.getFD().sync();
+            fOut.close();
+        } catch (IOException e) {
+            //throw the exception
+        }
+    }
+
+    public static String readTextFile(String realPath) {
+        File file = new File(realPath);
+        if (!file.exists()) {
+            Log.d(TAG,"...File not exist!");
+            return null;
+        }
+        String txt = "";
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(realPath), "UTF-8"));
+            String temp;
+            while ((temp = br.readLine()) != null) {
+                txt += temp;
+            }
+            br.close();
+        }catch (Exception e){
+            Log.d(TAG,"...readTextFile e=" + e.toString());
+        }
+
+        return txt;
+    }
+
 
 }

@@ -227,7 +227,7 @@ abstract public class LocalH264Dispatch extends BaseDispatch{
                     e.printStackTrace();
                 }
 
-                //Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
+                Log.d(TAG, " Socket Thread ..buffSize = " + buffSize );
 
                 getRawDataCallback().inputH264Nalu(getChannelNumber(),tmpbuf,buffSize);
 

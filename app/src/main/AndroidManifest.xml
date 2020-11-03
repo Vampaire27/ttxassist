@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".TTXApplication"
+
         android:allowBackup="true"
         android:persistent="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,36 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".ui.UISampleActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name="com.wwc2.ttxassist.ui.NativeWindowActivity" />
 
         <activity android:name="com.wwc2.ttxassist.ui.h264decode.PlayerActivity" />
 
-<!--        <activity android:name=".ui.LogoActivity"-->
-<!--            android:excludeFromRecents="true"-->
-<!--            android:launchMode="singleTask">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN"/>-->
-<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-
-        <service
-            android:name="com.wwc2.ttxassist.TTXService"
-            android:enabled="true"
-            android:exported="true">
+        <activity android:name=".ui.NativeWindowActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="com.wwc2.ttxassist.ttxService" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </service>
+        </activity>
 
-   </application>
+
+    </application>
 </manifest>

@@ -42,6 +42,10 @@ public class H264Utils {
           LOG_FILE_NAME = file;
     }
 
+    public static String getLogFilePath(){
+        return LOG_FILE_PATH;
+    }
+
     public static String getLogFileName(){
         return LOG_FILE_NAME;
     }

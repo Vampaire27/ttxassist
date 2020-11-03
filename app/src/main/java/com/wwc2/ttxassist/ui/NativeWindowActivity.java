@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.wwc2.ttxassist.AppConfig;
 import com.wwc2.ttxassist.R;
+import com.wwc2.ttxassist.fourCamera.Config;
+import com.wwc2.ttxassist.fourCamera.FourCameraProxy;
 import com.wwc2.ttxassist.h264.BaseDispatch;
 import com.wwc2.ttxassist.h264.LocalH264BackDispatch;
 import com.wwc2.ttxassist.h264.LocalH264ExternOneDispatch;
@@ -37,7 +39,6 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
 
     private TextView mFileName;
 
-    private NativeWindowSample mNativeWindowSample;
 
     private SurfaceView mSurfaceView;
 
@@ -55,7 +56,6 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mNativeWindowSample = new NativeWindowSample();
         setupView();
     }
 
@@ -119,6 +119,14 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
         startActivity(intent);
     }
 
+    public void onTakePhone(View view) {
+        String mPath = FourCameraProxy.getInstance().TakePhoto(Config.FRONT_CAPTURE);
+        TextView mText  = findViewById(R.id.photo_path);
+        mText.setText(mPath);
+
+    }
+
+
     public void setCameraData(int channel){
 
             BaseDispatch mBaseDispatch;
@@ -175,7 +183,7 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
                 default:
                     break;
             }
-        mFileName.setText(H264Utils.getLogFileName());
+        mFileName.setText(H264Utils.getLogFilePath() + H264Utils.getLogFileName());
     }
 
     @Override
