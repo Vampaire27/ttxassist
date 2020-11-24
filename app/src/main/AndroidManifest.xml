@@ -18,6 +18,8 @@
 
         <activity android:name="com.wwc2.ttxassist.ui.h264decode.PlayerActivity" />
 
+        <activity android:name="com.wwc2.ttxassist.YuvActivity" />
+
         <activity android:name=".ui.NativeWindowActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask">

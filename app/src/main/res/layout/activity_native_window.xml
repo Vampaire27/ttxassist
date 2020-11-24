@@ -119,4 +119,12 @@
             />
 
 
+    <Button
+        android:id="@+id/btn_yuv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="entryYUV"
+        android:text="YUV数据获取界面" />
+
+
 </LinearLayout>

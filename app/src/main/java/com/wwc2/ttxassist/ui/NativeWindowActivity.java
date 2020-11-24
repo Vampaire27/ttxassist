@@ -28,6 +28,7 @@ import com.wwc2.ttxassist.h264.LocalH264LeftDispatch;
 import com.wwc2.ttxassist.h264.LocalH264RightDispatch;
 import com.wwc2.ttxassist.utils.H264Utils;
 import com.wwc2.ttxassist.ui.h264decode.PlayerActivity;
+import com.wwc2.ttxassist.YuvActivity;
 
 public class NativeWindowActivity extends AppCompatActivity implements IChannelDataCallback{
     /**
@@ -123,8 +124,15 @@ public class NativeWindowActivity extends AppCompatActivity implements IChannelD
         String mPath = FourCameraProxy.getInstance().TakePhoto(Config.FRONT_CAPTURE);
         TextView mText  = findViewById(R.id.photo_path);
         mText.setText(mPath);
-
     }
+
+
+    public void entryYUV(View view) {
+        clearRegister();
+        Intent intent = new Intent(this, YuvActivity.class);
+        startActivity(intent);
+    }
+
 
 
     public void setCameraData(int channel){
